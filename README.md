@@ -1,7 +1,3 @@
-# Welcome to streamlit
+# LG-GPT Prototpye with Agency
 
-This is the app you get when you run `streamlit hello`, extracted as its own app.
-
-Edit [Hello.py](./Hello.py) to customize this app to your heart's desire. ❤️
-
-Check it out on [Streamlit Community Cloud](https://st-hello-app.streamlit.app/)
+This prototype demonstrates a chatbot experience with an LG sales associate personality. This bot leverages the ChatGPT API function calling capabilities to give the AI the ability to query a product database to load product data into its LLM context window. This lets the AI independently retrieve the data it needs to accurately answer the user's LG product questions.
