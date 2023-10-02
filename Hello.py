@@ -90,20 +90,29 @@ def call_and_process_gpt():
         except Exception as e:
             query_result_text = str(e) 
     
-        # Store query results
+        # Store query results for GPT
         st.session_state['gpt_messages'].append({"role": "function", "name": "query_lg_dishwasher_products", 
                                                     "content": query_result_df_string if query_result_df_string != "" else query_result_text})
         
-        # Not sure how I would store the Streamlit message for the function cal result
-        # st.session_state.messages.append({"role": "assistant", "content": query_result})
 
         # Render query results
-        with st.chat_message("SQL Result"):
-            if query_result_text != "":
-                st.markdown(query_result_text)
-            if query_result_df is not None and not query_result_df.empty:
-                st.markdown("<style>table.dataframe {font-size: 6px;}</style>", unsafe_allow_html=True)
-                st.write(query_result_df)
+        with st.chat_message("query result"):
+            rendered_query_results = "Error rendering query results"
+            if query_result_df is not None and not query_result_df.shape[0]:
+                rendered_query_results = f"Found {query_result_df.size} product results."
+            elif query_result_text != "":
+                rendered_query_results = query_result_text
+            st.markdown(rendered_query_results)
+            st.session_state.messages.append({"role": "query result", "content": rendered_query_results})
+        
+        # I wanted to render the results as a table but couldn't get it to work
+        # with st.chat_message("SQL Result"):
+        #     if query_result_text != "":
+        #         st.markdown(query_result_text)
+        #     if query_result_df is not None and not query_result_df.empty:
+        #         st.markdown("<style>table.dataframe {font-size: 6px;}</style>", unsafe_allow_html=True)
+        #         st.write(query_result_df)
+
 
         # Recursively call this same function to process the query results
         call_and_process_gpt()
