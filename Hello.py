@@ -98,8 +98,8 @@ def call_and_process_gpt():
         # Render query results
         with st.chat_message("query result"):
             rendered_query_results = "Error rendering query results"
-            if query_result_df is not None and not query_result_df.shape[0]:
-                rendered_query_results = f"Found {query_result_df.size} product results."
+            if query_result_df is not None and not query_result_df.empty:
+                rendered_query_results = f"Found {query_result_df.shape[0]} product results."
             elif query_result_text != "":
                 rendered_query_results = query_result_text
             st.markdown(rendered_query_results)
