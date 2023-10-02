@@ -115,10 +115,10 @@ def run():
 
     # Set Streamlit app meta info
     st.set_page_config(
-        page_title="LG-GPT with Agency Prototype",
+        page_title="LG-GPT Prototype (Dishwashers only)",
         page_icon="🤖",
     )
-    st.title("LG-GPT with Agency Prototype")
+    st.title("LG-GPT Prototype (Dishwashers only)")
 
     # Set the OpenAI key and model
     openai.api_key = st.secrets["OPENAI_API_KEY"]
