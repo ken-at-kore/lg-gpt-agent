@@ -62,29 +62,30 @@ def run():
             # Call OpenAI GPT (Response is streamed)
             for response in openai.ChatCompletion.create(
                 model=st.session_state["openai_model"],
-                messages=[
-                    {"role": m["role"], "content": m["content"]}
-                    for m in st.session_state.messages
-                ],
+                messages=st.session_state["gpt_messages"],
                 stream=True,
                 temperature=Constants.GPT_TEMPERATURE,
                 functions=Constants.GPT_FUNCTIONS
             ):
                 # Handle content stream
                 if not response.choices[0].delta.get("function_call",""):
-                    bot_content_response += response.choices[0].delta.get("content", "")
-                    full_response += response.choices[0].delta.get("content", "")
+                    content_chunk = response.choices[0].delta.get("content", "").replace('$','')
+                    bot_content_response += content_chunk
+                    full_response += content_chunk
                     message_placeholder.markdown(full_response + "▌")
                 
                 # Handle function call stream
                 else:
                     function_call_response += response.choices[0].delta.function_call.get("arguments", "")
                     if function_call_response == "":
-                        full_response += "\n\n"
+                        full_response += "\n\n`Database Query: "
                     full_response += response.choices[0].delta.function_call.get("arguments", "")
-                    message_placeholder.markdown(full_response + "▌")
+                    message_placeholder.markdown(full_response + "`▌")
 
+            if not function_call_response:
                 message_placeholder.markdown(full_response)
+            else :
+                message_placeholder.markdown(full_response + "`" if function_call_response else "")
         
         # Handle no function call
         if not function_call_response:
@@ -95,36 +96,40 @@ def run():
         # Handle function call
         else:
             # Store bot content
-            st.session_state.messages.append({"role": "assistant", "content": full_response})
+            st.session_state.messages.append({"role": "assistant", "content": full_response + "`"})
             st.session_state['gpt_messages'].append({"role": "assistant", "content": bot_content_response,
                                                      "function_call": {"name": "query_lg_dishwasher_products", "arguments": function_call_response}})
             
-            # Execute query
-            query = json.loads(function_call_response).get('sql_query') # Extract query
+            # Execute and parse query
+            query = json.loads(function_call_response).get('sql_query')
+
+            # Process query results
+            query_result_df = None
+            query_result_df_string = ""
+            query_result_text = ""
             try:
                 # Apply query to pseudo-DB
                 query_result_df = sqldf(query, {"lg_product_data": lg_product_data_frame})
 
                 # Get results
-                query_result_text = ""
                 if not query_result_df.empty:
                     query_result_df = query_result_df.head(5)
+                    query_result_df_string = query_result_df.to_string(index=False)
                 else:
-                    query_result = "Query result: No products found with that criteria"
+                    query_result_text = "Query result: No products found with that criteria"
             except Exception as e:
                 query_result_text = str(e) 
         
             # Store query results
-            function_result_content = query_result_text if query_result_text != "" else query_result_df
             st.session_state['gpt_messages'].append({"role": "function", "name": "query_lg_dishwasher_products", 
-                                                     "content": function_result_content})
+                                                     "content": query_result_df_string if query_result_df_string != "" else query_result_text})
             
             # Not sure how I would store the Streamlit message for the function cal result
             # st.session_state.messages.append({"role": "assistant", "content": query_result})
 
             # Render query results
             with st.chat_message("SQL Result"):
-                if query_result_text:
+                if query_result_text != "":
                     st.markdown(query_result_text)
                 if query_result_df is not None and not query_result_df.empty:
                     st.markdown("<style>table.dataframe {font-size: 6px;}</style>", unsafe_allow_html=True)
@@ -134,17 +139,13 @@ def run():
             with st.chat_message("assistant"):
                 message_placeholder = st.empty()
                 full_response = ""
-                messages_param = [
-                    {"role": m["role"], "content": m["content"]}
-                    for m in st.session_state.messages
-                ]
                 for response in openai.ChatCompletion.create(
                     model=st.session_state["openai_model"],
-                    messages=messages_param,
+                    messages=st.session_state["gpt_messages"],
                     temperature=Constants.GPT_TEMPERATURE,
                     stream=True
                 ):
-                    full_response += response.choices[0].delta.get("content", "")
+                    full_response += response.choices[0].delta.get("content", "").replace('$','')
                     message_placeholder.markdown(full_response + "▌")
                 message_placeholder.markdown(full_response)
             

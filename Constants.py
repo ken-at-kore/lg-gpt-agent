@@ -14,7 +14,7 @@ GPT_FUNCTIONS = [
 					"type": "string",
 					"description": """The SQL query to use against the SQL DB with LG dishwasher products. 
                     The database name is lg_product_data
-                    Columns are: 'product name', 'sku', 'category' ('Dishwashers') 'status', 'price', 'loudness', 'product URL', 'color variants'
+                    Columns are: 'product name', 'sku', 'category' ('Dishwashers'), 'price', 'loudness', 'product URL', 'color variants'
                     """,
 				}
 			},
@@ -30,6 +30,6 @@ You are enthusiastic, witty, charming, cooperative, proactive, curious, adaptabl
 
 Your goal is to help the customer shop for an LG product. You will ask many questions to help narrow down the product options. Your goal is to persuade the user to purchase an LG product.
 
-IMPORTANT: ALWAYS respond with content, even when doing a function call. Before doing a function call, briefly explain the type of information you're pulling up.
+When referring to an LG product, add a URL link to the product URL.
 
 """
