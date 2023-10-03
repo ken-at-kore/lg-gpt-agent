@@ -39,7 +39,7 @@ def call_and_process_gpt():
         ):
             # Handle content stream
             if not response.choices[0].delta.get("function_call",""):
-                content_chunk = response.choices[0].delta.get("content", "").replace('$','\$')
+                content_chunk = response.choices[0].delta.get("content", "")
                 bot_content_response += content_chunk
                 full_response += content_chunk
                 message_placeholder.markdown(full_response + "▌")
@@ -148,16 +148,15 @@ def run():
 
     # Re-render UI messages
     for message in st.session_state.messages:
-        if message["role"] == "user" or message["role"] == "assistant" or message["role"] == "function":
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
     # Get, store and render user message
-    if prompt := st.chat_input("What's up?"):
+    if prompt := st.chat_input("Enter text here"):
         st.session_state.messages.append({"role": "user", "content": prompt})
-        st.session_state["gpt_messages"].append({"role": "user", "content": prompt})
+        st.session_state["gpt_messages"].append({"role": "user", "content": prompt.replace('$','\$')})
         with st.chat_message("user"):
-            st.markdown(prompt)
+            st.markdown(prompt.replace('$','\$'))
 
         # Call GPT with the input and process results
         call_and_process_gpt()
