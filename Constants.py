@@ -1,7 +1,7 @@
 
 WELCOME_BOT_MESSAGE = """Welcome to LG 👋 I'm an AI that can help you shop for LG dishwashers. I promise I'll learn about other products soon 😅 
 
-How's it going?"""
+How's it going? 🙂"""
 
 
 GPT_TEMPERATURE = 0.25
