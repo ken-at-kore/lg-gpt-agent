@@ -12,6 +12,8 @@ This prototype demonstrates a chatbot experience with an LG sales associate pers
 ## Streamlit web framework
 The prototype uses a service and Python-based web framework called Streamlit. https://streamlit.io
 
+- Streamlit tutorial: Build conversational apps: https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps
+
 ## SQL querying CSV files with Pandasql
 The prototype stores product data as a CSV file. The LLM queries data with SQL. I'm using a Python library called Pandasql to query the CSV file with SQL. https://pypi.org/project/pandasql/
 
