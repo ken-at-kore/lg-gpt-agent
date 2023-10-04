@@ -9,6 +9,11 @@ This prototype demonstrates a chatbot experience with an LG sales associate pers
 
 - A Tutorial Guide to Using The Function Call Feature of OpenAI's ChatGPT API (blog post): https://codeconfessions.substack.com/p/creating-chatgpt-plugins-using-the
 
-## Streamlit
+## Streamlit web framework
 The prototype uses a service and Python-based web framework called Streamlit. https://streamlit.io
 
+## SQL querying CSV files with Pandasql
+The prototype stores product data as a CSV file. The LLM queries data with SQL. I'm using a Python library called Pandasql to query the CSV file with SQL. https://pypi.org/project/pandasql/
+
+## Prototype architecture
+![LG GPT  Autonomous Function Calling Bot Prototype](https://github.com/ken-at-kore/lg-gpt-agent/assets/146371853/0212091c-d75c-4eb6-81cb-5ac06b3ce99f)
